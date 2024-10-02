@@ -1,0 +1,13 @@
+---
+
+- hosts: all
+  become: true
+  tasks:
+
+  - shell: echo 'jozshua'
+    register: username
+  - debug: msg="Playbook servers is created by {{ username.stdout }}"
+
+  - shell: echo 'Jozshua Amiel Alonzo'
+    register: myName
+  - debug: msg="Good day! my name is  {{ myName.stdout }}, from CPE dept."
