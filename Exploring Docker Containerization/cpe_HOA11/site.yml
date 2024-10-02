@@ -1,0 +1,70 @@
+---
+- hosts: all
+  become: true
+
+  tasks:
+    - name: Install aptitude
+      apt:
+        name: aptitude
+        state: latest
+        update_cache: true
+
+    - name: Install required system packages
+      apt:
+        pkg:
+          - apt-transport-https
+          - ca-certificates
+          - curl
+          - software-properties-common
+          - python3-pip
+          - virtualenv
+          - python3-setuptools
+        state: latest
+        update_cache: true
+
+    - name: Add Docker GPG apt Key
+      apt_key:
+        url: https://download.docker.com/linux/ubuntu/gpg
+        state: present
+
+    - name: Add Docker Repository
+      apt_repository:
+        repo: deb https://download.docker.com/linux/ubuntu focal stable
+        state: present
+
+    - name: Update apt and install docker-ce
+      apt:
+        name: docker-ce
+        state: latest
+        update_cache: true
+
+    - name: Install Docker Module for Python
+      pip:
+        name: docker
+
+    - name: create build directory
+      file:
+         path: /root/demo-dockerfile
+         state: directory
+         owner: root
+         group: root
+         mode: '0755'
+
+    - name: copy Dockerfile
+      copy:
+        src: ./dockerfile
+        dest: /root/demo-dockerfile/dockerfile
+        owner: root
+        group: root
+        mode: '0644'
+
+    - name: build container image
+      docker_image:
+        name: democontainer:v1.0
+        build:
+          path: /root/demo-dockerfile
+        source: build
+        state: present
+
+    - name: add docker group to user current user
+      command: sudo usermod -a -G docker jozshua
