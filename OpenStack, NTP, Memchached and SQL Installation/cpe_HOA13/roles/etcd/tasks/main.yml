@@ -1,0 +1,40 @@
+- name: Install etcd (Ubuntu)
+  apt:
+    name:
+      - etcd
+    state: latest
+    update_cache: yes
+  when: ansible_distribution == "Ubuntu"
+
+- name: Edit the etcd file (Ubuntu)
+  copy:
+    dest: /etc/default/ectd
+    content: |
+      ETCD_NAME="controller"
+      ETCD_DATA_DIR="/var/lib/etcd"
+      ETCD_INITIAL_CLUSTER_STATE="new"
+      ETCD_INITIAL_CLUSTER_TOKEN="etcd-cluster-01"
+      ETCD_INITIAL_CLUSTER="controller=http://127.0.0.1:2380"
+      ETCD_INITIAL_ADVERTISE_PEER_URLS="http://127.0.0.1:2380"
+      ETCD_ADVERTISE_CLIENT_URLS="http://127.0.0.1:2379"
+      ETCD_LISTEN_PEER_URLS="http://127.0.0.1:2379"
+    mode: 0755
+  when: ansible_distribution == "Ubuntu"
+
+- name: Stop etcd service (Ubuntu)
+  service:
+    name: etcd
+    state: stopped
+  when: ansible_distribution == "Ubuntu"
+
+- name: Start etcd service (Ubuntu)
+  service:
+    name: etcd
+    state: started
+  when: ansible_distribution == "Ubuntu"
+
+- name: Enable etcd service
+  service:
+    name: etcd
+    enabled: yes
+  when: ansible_distribution == "Ubuntu"

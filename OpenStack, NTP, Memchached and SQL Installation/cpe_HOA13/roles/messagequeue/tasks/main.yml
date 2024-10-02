@@ -1,0 +1,18 @@
+- name: Install message queue (Ubuntu)
+  apt:
+    name:
+      - rabbitmq-server
+    state: latest
+    update_cache: yes
+  when: ansible_distribution == "Ubuntu"
+
+- name: Add openstack user
+  community.rabbitmq.rabbitmq_user:
+    user: openstack
+    password: RABIT_PASS
+    vhost: /
+    configure_priv: .*
+    read_priv: .*
+    write_priv: .*
+    state: present
+  when: ansible_distribution == "Ubuntu"
