@@ -1,0 +1,35 @@
+- name: installation of lamp (Ubuntu)
+  apt:
+    name:
+      - apache2
+      - php
+    state: latest
+    update_cache: yes
+  when: ansible_distribution == "Ubuntu"
+
+- name: installation of mariadb (Ubuntu)
+  apt:
+    name: mariadb-server
+    state: latest
+  when: ansible_distribution == "Ubuntu"
+
+- name: installation of lamp (CentOS)
+  dnf:
+    name:
+      - php
+      - httpd
+    state: latest
+    update_cache: yes
+  when: ansible_distribution == "CentOS"
+
+- name: installation of mariadb (CentOS)
+  yum:
+    name: mariadb-server
+    state: latest
+  when: ansible_distribution == "CentOS"
+
+- name: "Mariadb- Restarting/Enabling"
+  service:
+    name: mariadb
+    state: restarted
+    enabled: true
